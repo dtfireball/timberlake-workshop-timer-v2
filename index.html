@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <meta name="theme-color" content="#111827" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <meta name="apple-mobile-web-app-title" content="Workshop Timer" />
+  <title>Timberlake Workshop Timer</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="app-header">
+    <div>
+      <p class="eyebrow">TIMBERLAKE AUTOMOTIVE</p>
+      <h1>Workshop Timer</h1>
+    </div>
+    <button id="newJobButton" class="primary">+ New Job</button>
+  </header>
+
+  <main>
+    <section>
+      <div class="section-heading">
+        <h2>Active Jobs</h2>
+        <span id="activeCount" class="badge">0</span>
+      </div>
+      <div id="activeJobs" class="job-grid"></div>
+      <p id="emptyActive" class="empty-state">No active jobs yet.</p>
+    </section>
+
+    <section>
+      <div class="section-heading">
+        <h2>Completed Jobs</h2>
+        <div class="section-actions">
+          <input id="searchInput" type="search" placeholder="Search rego, job or customer" />
+          <button id="exportButton" class="secondary">Export CSV</button>
+        </div>
+      </div>
+
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>Started</th>
+              <th>Completed</th>
+              <th>Customer</th>
+              <th>Vehicle</th>
+              <th>Rego</th>
+              <th>Mileage</th>
+              <th>Total</th>
+              <th></th>
+            </tr>
+          </thead>
+          <tbody id="completedJobs"></tbody>
+        </table>
+      </div>
+      <p id="emptyCompleted" class="empty-state">No completed jobs yet.</p>
+    </section>
+  </main>
+
+  <dialog id="jobDialog">
+    <form id="jobForm" method="dialog">
+      <div class="dialog-header">
+        <h2>New Job Timer</h2>
+        <button type="button" id="closeDialog" class="icon-button" aria-label="Close">×</button>
+      </div>
+
+      <label>
+        Customer *
+        <input name="customer" required placeholder="Customer name" />
+      </label>
+
+      <div class="form-grid">
+        <label>
+          Registration
+          <input name="registration" placeholder="ABC123" autocapitalize="characters" />
+        </label>
+
+        <label>
+          Mileage
+          <input name="mileage" inputmode="numeric" placeholder="e.g. 184520" />
+        </label>
+      </div>
+
+      <div class="form-grid">
+        <label>
+          Make
+          <input name="make" placeholder="e.g. Mitsubishi" />
+        </label>
+
+        <label>
+          Model
+          <input name="model" placeholder="e.g. Triton" />
+        </label>
+      </div>
+
+      <label>
+        Notes
+        <textarea name="notes" rows="3" placeholder="Optional notes"></textarea>
+      </label>
+
+      <div class="dialog-actions">
+        <button type="button" id="cancelDialog" class="secondary">Cancel</button>
+        <button type="submit" class="primary">Create & Start</button>
+      </div>
+    </form>
+  </dialog>
+
+  <dialog id="detailsDialog">
+    <div id="detailsContent"></div>
+  </dialog>
+
+  <script src="app.js"></script>
+</body>
+</html>
