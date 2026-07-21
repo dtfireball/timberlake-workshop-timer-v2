@@ -34,7 +34,7 @@ jobForm.addEventListener("submit", (event) => {
   pauseAnyRunningJob();
 
   state.jobs.push({
-    id: crypto.randomUUID(),
+   id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
     customer: data.get("customer").trim(),
     registration: data.get("registration").trim().toUpperCase(),
     mileage: data.get("mileage").trim(),
