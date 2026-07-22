@@ -1,8 +1,10 @@
+const APP_VERSION = "v2.2-dev";
 const STORAGE_KEY = "timberlake-workshop-timer-v1";
 
 const state = loadState();
 for (const job of state.jobs) {
   job.customer = job.customer || job.label || "";
+  job.year = job.year || "";
   job.make = job.make || "";
   job.model = job.model || "";
   job.mileage = job.mileage || job.jobNumber || "";
@@ -19,8 +21,41 @@ const jobDialog = document.querySelector("#jobDialog");
 const detailsDialog = document.querySelector("#detailsDialog");
 const detailsContent = document.querySelector("#detailsContent");
 const jobForm = document.querySelector("#jobForm");
+const jobDialogTitle = document.querySelector("#jobDialogTitle");
+const jobSubmitButton = document.querySelector("#jobSubmitButton");
+function openNewJobDialog() {
+  jobForm.reset();
+  jobForm.elements.editingJobId.value = "";
+  jobDialogTitle.textContent = "New Job Timer";
+  jobSubmitButton.textContent = "Create & Start";
+  jobDialog.showModal();
+}
 
-document.querySelector("#newJobButton").addEventListener("click", () => jobDialog.showModal());
+function openEditJobDialog(jobId) {
+  const job = state.jobs.find((item) => item.id === jobId);
+
+  if (!job) {
+    alert("This job could not be found.");
+    return;
+  }
+
+  jobForm.reset();
+
+  jobForm.elements.editingJobId.value = job.id;
+  jobForm.elements.customer.value = job.customer || "";
+  jobForm.elements.year.value = job.year || "";
+  jobForm.elements.make.value = job.make || "";
+  jobForm.elements.model.value = job.model || "";
+  jobForm.elements.registration.value = job.registration || "";
+  jobForm.elements.mileage.value = job.mileage || "";
+  jobForm.elements.notes.value = job.notes || "";
+
+  jobDialogTitle.textContent = "Edit Job";
+  jobSubmitButton.textContent = "Save Changes";
+
+  jobDialog.showModal();
+}
+document.querySelector("#newJobButton").addEventListener("click", openNewJobDialog);
 document.querySelector("#closeDialog").addEventListener("click", () => jobDialog.close());
 document.querySelector("#cancelDialog").addEventListener("click", () => jobDialog.close());
 document.querySelector("#exportButton").addEventListener("click", exportCsv);
@@ -28,24 +63,49 @@ searchInput.addEventListener("input", render);
 
 jobForm.addEventListener("submit", (event) => {
   event.preventDefault();
+
   const data = new FormData(jobForm);
-  const now = Date.now();
+  const editingJobId = data.get("editingJobId");
+  const customer = data.get("customer").trim();
 
-  pauseAnyRunningJob();
+  if (!customer) {
+    alert("Please enter a customer name.");
+    return;
+  }
 
-  state.jobs.push({
-   id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
-    customer: data.get("customer").trim(),
+  const jobData = {
+    customer,
+    year: data.get("year").trim(),
+    make: data.get("make").trim().toUpperCase(),
+    model: data.get("model").trim().toUpperCase(),
     registration: data.get("registration").trim().toUpperCase(),
     mileage: data.get("mileage").trim(),
-    make: data.get("make").trim(),
-    model: data.get("model").trim(),
-    notes: data.get("notes").trim(),
-    createdAt: now,
-    completedAt: null,
-    status: "active",
-    sessions: [{ start: now, end: null }]
-  });
+    notes: data.get("notes").trim()
+  };
+
+  if (editingJobId) {
+    const job = state.jobs.find((item) => item.id === editingJobId);
+
+    if (!job) {
+      alert("This job could not be found.");
+      return;
+    }
+
+    Object.assign(job, jobData);
+  } else {
+    const now = Date.now();
+
+    pauseAnyRunningJob();
+
+    state.jobs.push({
+      id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+      ...jobData,
+      createdAt: now,
+      completedAt: null,
+      status: "active",
+      sessions: [{ start: now, end: null }]
+    });
+  }
 
   saveState();
   jobForm.reset();
@@ -86,7 +146,9 @@ function jobTitle(job) {
 }
 
 function vehicleName(job) {
-  return [job.make, job.model].filter(Boolean).join(" ") || "Vehicle not entered";
+  return [job.year, job.make, job.model]
+    .filter(Boolean)
+    .join(" ") || "Vehicle not entered";
 }
 
 function totalMilliseconds(job) {
@@ -111,19 +173,38 @@ function formatDateTime(timestamp) {
     timeStyle: "short"
   }).format(new Date(timestamp));
 }
+function moveJobToTop(jobId) {
+  const jobIndex = state.jobs.findIndex((job) => job.id === jobId);
 
+  if (jobIndex <= 0) return;
+
+  const [job] = state.jobs.splice(jobIndex, 1);
+  state.jobs.unshift(job);
+}
 function startJob(id) {
-  const job = state.jobs.find(job => job.id === id);
+  const job = state.jobs.find((job) => job.id === id);
+
   if (!job || job.status !== "active" || isRunning(job)) return;
 
-  const running = state.jobs.find(item => isRunning(item));
+  const running = state.jobs.find((item) => isRunning(item));
+
   if (running && running.id !== id) {
-    const ok = confirm(`${jobTitle(running)} is currently running. Pause it and start ${jobTitle(job)}?`);
+    const ok = confirm(
+      `${jobTitle(running)} is currently running. Pause it and start ${jobTitle(job)}?`
+    );
+
     if (!ok) return;
   }
 
   pauseAnyRunningJob(id);
-  job.sessions.push({ start: Date.now(), end: null });
+
+  job.sessions.push({
+    start: Date.now(),
+    end: null
+  });
+
+  moveJobToTop(id);
+
   saveState();
   render();
 }
@@ -214,12 +295,9 @@ function showDetails(id) {
 }
 
 function render() {
-  const activeJobs = state.jobs
-    .filter(job => job.status === "active")
-    .sort((a, b) => {
-      const runningDifference = Number(isRunning(b)) - Number(isRunning(a));
-      return runningDifference || b.createdAt - a.createdAt;
-    });
+const activeJobs = state.jobs.filter(
+  (job) => job.status === "active"
+);
 
   activeCountEl.textContent = activeJobs.length;
   emptyActiveEl.hidden = activeJobs.length > 0;
@@ -241,6 +319,7 @@ function render() {
           <button class="success" onclick="startJob('${job.id}')" ${running ? "disabled" : ""}>▶ Start</button>
           <button class="secondary" onclick="pauseJob('${job.id}')" ${running ? "" : "disabled"}>⏸ Pause</button>
           <button class="primary complete" onclick="completeJob('${job.id}')">✓ Complete Job</button>
+          <button class="secondary" onclick="openEditJobDialog('${job.id}')">Edit</button>
           <button class="secondary complete" onclick="showDetails('${job.id}')">View Details</button>
         </div>
       </article>
@@ -264,7 +343,10 @@ function render() {
       <td>${escapeHtml(job.registration || "—")}</td>
       <td>${escapeHtml(job.mileage || "—")}</td>
       <td>${formatDuration(totalMilliseconds(job))}</td>
-      <td><button class="link-button" onclick="showDetails('${job.id}')">View</button></td>
+<td>
+  <button class="link-button" onclick="openEditJobDialog('${job.id}')">Edit</button>
+  <button class="link-button" onclick="showDetails('${job.id}')">View</button>
+</td>
     </tr>
   `).join("");
 }

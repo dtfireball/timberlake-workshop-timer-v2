@@ -62,51 +62,109 @@
   </main>
 
   <dialog id="jobDialog">
-    <form id="jobForm" method="dialog">
-      <div class="dialog-header">
-        <h2>New Job Timer</h2>
-        <button type="button" id="closeDialog" class="icon-button" aria-label="Close">×</button>
-      </div>
+ <form id="jobForm" method="dialog">
+  <div class="dialog-header">
+    <h2 id="jobDialogTitle">New Job Timer</h2>
+    <button
+      type="button"
+      id="closeDialog"
+      class="icon-button"
+      aria-label="Close"
+    >
+      ×
+    </button>
+  </div>
 
-      <label>
-        Customer *
-        <input name="customer" required placeholder="Customer name" />
-      </label>
+  <input type="hidden" name="editingJobId" />
 
-      <div class="form-grid">
-        <label>
-          Registration
-          <input name="registration" placeholder="ABC123" autocapitalize="characters" style="text-transform: uppercase;" />
-        </label>
+  <label>
+    Customer *
+    <input
+      name="customer"
+      required
+      placeholder="Customer name"
+    />
+  </label>
 
-        <label>
-          Mileage
-          <input name="mileage" inputmode="numeric" placeholder="e.g. 184520" />
-        </label>
-      </div>
+  <div class="form-grid">
+    <label>
+      Year
+      <input
+        name="year"
+        inputmode="numeric"
+        placeholder="e.g. 2014"
+      />
+    </label>
 
-      <div class="form-grid">
-        <label>
-          Make
-          <input name="make" placeholder="e.g. Mitsubishi" />
-        </label>
+    <label>
+      Make
+      <input
+        name="make"
+        placeholder="e.g. TOYOTA"
+        autocapitalize="characters"
+        style="text-transform: uppercase;"
+      />
+    </label>
+  </div>
 
-        <label>
-          Model
-          <input name="model" placeholder="e.g. Triton" />
-        </label>
-      </div>
+  <label>
+    Model
+    <input
+      name="model"
+      placeholder="e.g. CAMRY"
+      autocapitalize="characters"
+      style="text-transform: uppercase;"
+    />
+  </label>
 
-      <label>
-        Notes
-        <textarea name="notes" rows="3" placeholder="Optional notes"></textarea>
-      </label>
+  <div class="form-grid">
+    <label>
+      Registration
+      <input
+        name="registration"
+        placeholder="ABC123"
+        autocapitalize="characters"
+        style="text-transform: uppercase;"
+      />
+    </label>
 
-      <div class="dialog-actions">
-        <button type="button" id="cancelDialog" class="secondary">Cancel</button>
-        <button type="submit" class="primary">Create & Start</button>
-      </div>
-    </form>
+    <label>
+      Mileage
+      <input
+        name="mileage"
+        inputmode="numeric"
+        placeholder="e.g. 184520"
+      />
+    </label>
+  </div>
+
+  <label>
+    Notes
+    <textarea
+      name="notes"
+      rows="3"
+      placeholder="Optional notes"
+    ></textarea>
+  </label>
+
+  <div class="dialog-actions">
+    <button
+      type="button"
+      id="cancelDialog"
+      class="secondary"
+    >
+      Cancel
+    </button>
+
+    <button
+      type="submit"
+      id="jobSubmitButton"
+      class="primary"
+    >
+      Create &amp; Start
+    </button>
+  </div>
+</form>
   </dialog>
 
   <dialog id="detailsDialog">
