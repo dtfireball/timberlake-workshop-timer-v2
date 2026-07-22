@@ -326,4 +326,8 @@ render();
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js"));
-}
+}const registrationInput = document.querySelector('input[name="registration"]');
+
+registrationInput.addEventListener("input", () => {
+  registrationInput.value = registrationInput.value.toUpperCase();
+});
