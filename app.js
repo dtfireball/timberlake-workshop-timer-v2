@@ -1,6 +1,7 @@
 const APP_VERSION = "v2.2-dev";
 const STORAGE_KEY = "timberlake-workshop-timer-v1";
-
+const SETTINGS_KEY = "fs-workshop-settings-v1";
+const CUSTOMERS_KEY = "fs-workshop-customers-v1";
 const state = loadState();
 for (const job of state.jobs) {
   job.customer = job.customer || job.label || "";
@@ -20,13 +21,27 @@ const searchInput = document.querySelector("#searchInput");
 const jobDialog = document.querySelector("#jobDialog");
 const detailsDialog = document.querySelector("#detailsDialog");
 const detailsContent = document.querySelector("#detailsContent");
+
+const settingsDialog = document.querySelector("#settingsDialog");
+const settingsForm = document.querySelector("#settingsForm");
+const settingsButton = document.querySelector("#settingsButton");
+const closeSettingsButton = document.querySelector("#closeSettings");
+const cancelSettingsButton = document.querySelector("#cancelSettings");
+const businessNameHeader = document.querySelector("#businessNameHeader");
+const customersDialog = document.querySelector("#customersDialog");
+const customersForm = document.querySelector("#customersForm");
+const customersButton = document.querySelector("#customersButton");
+const closeCustomersButton = document.querySelector("#closeCustomers");
+const cancelCustomersButton = document.querySelector("#cancelCustomers");
+const customersList = document.querySelector("#customersList");
+const emptyCustomers = document.querySelector("#emptyCustomers");
 const jobForm = document.querySelector("#jobForm");
 const jobDialogTitle = document.querySelector("#jobDialogTitle");
 const jobSubmitButton = document.querySelector("#jobSubmitButton");
 function openNewJobDialog() {
   jobForm.reset();
   jobForm.elements.editingJobId.value = "";
-  jobDialogTitle.textContent = "New Job Timer";
+  jobDialogTitle.textContent = "New Job";
   jobSubmitButton.textContent = "Create & Start";
   jobDialog.showModal();
 }
@@ -55,6 +70,240 @@ function openEditJobDialog(jobId) {
 
   jobDialog.showModal();
 }
+function loadCustomers() {
+  try {
+    return JSON.parse(localStorage.getItem(CUSTOMERS_KEY)) || [];
+  } catch {
+    return [];
+  }
+}
+
+function saveCustomers(customers) {
+  localStorage.setItem(CUSTOMERS_KEY, JSON.stringify(customers));
+}
+function renderCustomers() {
+const customers = loadCustomers().sort((a, b) =>
+  a.name.localeCompare(b.name)
+);
+
+  customersList.innerHTML = "";
+
+  if (customers.length === 0) {
+    emptyCustomers.hidden = false;
+    return;
+  }
+
+  emptyCustomers.hidden = true;
+
+ customers
+  .filter((customer) => {
+    const search = customerSearch.value.trim().toLowerCase();
+
+    if (!search) return true;
+
+    return (
+      customer.name.toLowerCase().includes(search) ||
+      customer.phone.toLowerCase().includes(search) ||
+      customer.mobile.toLowerCase().includes(search) ||
+      customer.email.toLowerCase().includes(search)
+    );
+  })
+  .forEach((customer) => {
+    const customerCard = document.createElement("div");
+    customerCard.className = "customer-item";
+    customerCard.dataset.customerId = customer.id;
+
+customerCard.innerHTML = `
+  <div class="customer-details">
+    <strong>${customer.name}</strong>
+    <span>${customer.mobile || customer.phone || "No phone number"}</span>
+    <span>${customer.email || "No email address"}</span>
+  </div>
+
+  <button
+    type="button"
+    class="danger customer-delete"
+    data-customer-id="${customer.id}"
+  >
+    Delete
+  </button>
+`;
+
+    customersList.appendChild(customerCard);
+
+customerCard
+  .querySelector(".customer-details")
+  .addEventListener("click", () => {
+    customersForm.elements.editingCustomerId.value = customer.id;
+    customersForm.elements.customerName.value = customer.name;
+    customersForm.elements.phone.value = customer.phone;
+    customersForm.elements.mobile.value = customer.mobile;
+    customersForm.elements.email.value = customer.email;
+  });
+
+customerCard
+  .querySelector(".customer-delete")
+  .addEventListener("click", () => {
+    const confirmed = confirm(`Delete ${customer.name}?`);
+
+    if (!confirmed) return;
+
+    const updatedCustomers = loadCustomers().filter(
+      (savedCustomer) => savedCustomer.id !== customer.id
+    );
+
+    saveCustomers(updatedCustomers);
+    renderCustomers();
+  });
+  });
+}
+function loadSettings() {
+  try {
+    return JSON.parse(localStorage.getItem(SETTINGS_KEY)) || {};
+  } catch {
+    return {};
+  }
+}
+
+function populateSettingsForm() {
+  const settings = loadSettings();
+
+  settingsForm.elements.businessName.value = settings.businessName || "";
+  settingsForm.elements.abn.value = settings.abn || "";
+  settingsForm.elements.streetAddress.value = settings.streetAddress || "";
+  settingsForm.elements.suburb.value = settings.suburb || "";
+  settingsForm.elements.postcode.value = settings.postcode || "";
+  settingsForm.elements.state.value = settings.state || "";
+  settingsForm.elements.phone.value = settings.phone || "";
+  settingsForm.elements.mobile.value = settings.mobile || "";
+  settingsForm.elements.email.value = settings.email || "";
+  settingsForm.elements.website.value = settings.website || "";
+  settingsForm.elements.labourRate.value = settings.labourRate || "";
+  settingsForm.elements.gstRegistered.value = settings.gstRegistered || "yes";
+}
+
+function updateBusinessNameHeader() {
+  const settings = loadSettings();
+
+  businessNameHeader.textContent =
+    settings.businessName || "Timberlake Automotive";
+}
+
+function openSettingsDialog() {
+  populateSettingsForm();
+  settingsDialog.showModal();
+}
+
+settingsButton.addEventListener("click", openSettingsDialog);
+closeSettingsButton.addEventListener("click", () => settingsDialog.close());
+cancelSettingsButton.addEventListener("click", () => settingsDialog.close());
+customerSearch.addEventListener("input", () => {
+  renderCustomers();
+});
+customersButton.addEventListener("click", () => {
+  customersForm.reset();
+  renderCustomers();
+  customersDialog.showModal();
+});
+
+closeCustomersButton.addEventListener("click", () => {
+    customersDialog.close();
+});
+
+cancelCustomersButton.addEventListener("click", () => {
+    customersDialog.close();
+});
+customersForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const data = new FormData(customersForm);
+  const customerName = data.get("customerName").trim();
+
+  if (!customerName) {
+    alert("Please enter a customer name.");
+    return;
+  }
+
+const customers = loadCustomers();
+const editingCustomerId =
+  customersForm.elements.editingCustomerId.value;
+  const duplicateCustomer = customers.find((customer) => {
+  const sameName =
+    customer.name.trim().toLowerCase() === customerName.toLowerCase();
+
+  const isDifferentCustomer =
+    !editingCustomerId || customer.id !== editingCustomerId;
+
+  return sameName && isDifferentCustomer;
+});
+
+if (duplicateCustomer) {
+  const continueSaving = confirm(
+    `A customer named "${duplicateCustomer.name}" already exists. Save another customer with the same name?`
+  );
+
+  if (!continueSaving) return;
+}
+
+const customerData = {
+  name: customerName,
+  phone: data.get("phone").trim(),
+  mobile: data.get("mobile").trim(),
+  email: data.get("email").trim()
+};
+
+if (editingCustomerId) {
+  const customerIndex = customers.findIndex(
+    (customer) => customer.id === editingCustomerId
+  );
+
+  if (customerIndex !== -1) {
+    customers[customerIndex] = {
+      ...customers[customerIndex],
+      ...customerData,
+      updatedAt: Date.now()
+    };
+  }
+} else {
+  customers.push({
+    id: `${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+    ...customerData,
+    createdAt: Date.now()
+  });
+}
+
+saveCustomers(customers);
+customersForm.reset();
+customersForm.elements.editingCustomerId.value = "";
+renderCustomers();
+
+  alert("Customer saved.");
+});
+settingsForm.addEventListener("submit", (event) => {
+  event.preventDefault();
+
+  const data = new FormData(settingsForm);
+
+  const settings = {
+    businessName: data.get("businessName").trim(),
+    abn: data.get("abn").trim(),
+    streetAddress: data.get("streetAddress").trim(),
+    suburb: data.get("suburb").trim(),
+    postcode: data.get("postcode").trim(),
+    state: data.get("state").trim(),
+    phone: data.get("phone").trim(),
+    mobile: data.get("mobile").trim(),
+    email: data.get("email").trim(),
+    website: data.get("website").trim(),
+    labourRate: data.get("labourRate").trim(),
+    gstRegistered: data.get("gstRegistered")
+  };
+
+  localStorage.setItem(SETTINGS_KEY, JSON.stringify(settings));
+
+  updateBusinessNameHeader();
+  settingsDialog.close();
+});
 document.querySelector("#newJobButton").addEventListener("click", openNewJobDialog);
 document.querySelector("#closeDialog").addEventListener("click", () => jobDialog.close());
 document.querySelector("#cancelDialog").addEventListener("click", () => jobDialog.close());
@@ -320,6 +569,7 @@ const activeJobs = state.jobs.filter(
           <button class="secondary" onclick="pauseJob('${job.id}')" ${running ? "" : "disabled"}>⏸ Pause</button>
           <button class="primary complete" onclick="completeJob('${job.id}')">✓ Complete Job</button>
           <button class="secondary" onclick="openEditJobDialog('${job.id}')">Edit</button>
+          <button class="danger" onclick="deleteJob('${job.id}')">Delete</button>
           <button class="secondary complete" onclick="showDetails('${job.id}')">View Details</button>
         </div>
       </article>
@@ -345,6 +595,7 @@ const activeJobs = state.jobs.filter(
       <td>${formatDuration(totalMilliseconds(job))}</td>
 <td>
   <button class="link-button" onclick="openEditJobDialog('${job.id}')">Edit</button>
+  <button class="link-button danger-link" onclick="deleteJob('${job.id}')">Delete</button>
   <button class="link-button" onclick="showDetails('${job.id}')">View</button>
 </td>
     </tr>
@@ -403,12 +654,16 @@ setInterval(() => {
     if (job) timer.textContent = formatDuration(totalMilliseconds(job));
   }
 }, 1000);
-
+updateBusinessNameHeader();
 render();
 
+/*
 if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js"));
-}const registrationInput = document.querySelector('input[name="registration"]');
+    window.addEventListener("load", () => navigator.serviceWorker.register("service-worker.js"));
+}
+*/
+
+const registrationInput = document.querySelector('input[name="registration"]');
 
 registrationInput.addEventListener("input", () => {
   registrationInput.value = registrationInput.value.toUpperCase();

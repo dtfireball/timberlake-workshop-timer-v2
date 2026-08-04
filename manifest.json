@@ -1,7 +1,7 @@
 {
-  "name": "Timberlake Workshop Timer v2",
-  "short_name": "Workshop Timer",
-  "description": "Track labour time for individual workshop jobs.",
+  "name": "FS Workshop",
+  "short_name": "FS Workshop",
+  "description": "Manage workshop jobs and track recorded labour time.",
   "start_url": "./",
   "display": "standalone",
   "background_color": "#f3f4f6",

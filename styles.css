@@ -1,9 +1,16 @@
 * { box-sizing: border-box; }
 
 :root {
+  --fs-orange: #F57C00;
+  --fs-orange-dark: #E66A00;
+  --fs-charcoal: #1B1B1B;
+  --fs-light: #F5F5F5;
+  --fs-border: #E5E7EB;
+  --fs-danger: #C81E1E;
+
   font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
-  color: #111827;
-  background: #f3f4f6;
+  color: var(--fs-charcoal);
+  background: var(--fs-light);
   font-synthesis: none;
 }
 
@@ -32,8 +39,12 @@ button:disabled {
 }
 
 .primary {
-  background: #111827;
+  background: var(--fs-orange);
   color: white;
+}
+
+.primary:hover {
+  background: var(--fs-orange-dark);
 }
 
 .secondary {
@@ -43,13 +54,18 @@ button:disabled {
 }
 
 .danger {
-  background: #b91c1c;
+  background: var(--fs-danger);
   color: white;
 }
 
 .success {
-  background: #166534;
+  background: var(--fs-orange);
   color: white;
+}
+
+.success:hover {
+    background: var(--fs-green);
+    filter: brightness(0.92);
 }
 
 .app-header {
@@ -62,7 +78,7 @@ button:disabled {
   gap: 16px;
   padding: calc(16px + env(safe-area-inset-top)) 20px 16px;
   color: white;
-  background: #111827;
+  background: var(--fs-orange);
   box-shadow: 0 4px 14px rgba(0,0,0,.15);
 }
 
@@ -77,7 +93,7 @@ h1 {
 
 .eyebrow {
   margin-bottom: 4px;
-  color: #9ca3af;
+  color: rgba(255, 255, 255, 0.8);
   font-size: .72rem;
   font-weight: 800;
   letter-spacing: .12em;
@@ -141,7 +157,7 @@ section {
 }
 
 .job-card.running {
-  border: 2px solid #166534;
+  border: 2px solid var(--fs-orange);
 }
 
 .job-meta {
@@ -170,8 +186,8 @@ section {
 }
 
 .status.running {
-  background: #dcfce7;
-  color: #166534;
+  background: #fff1e6;
+  color: var(--fs-orange-dark);
 }
 
 .card-actions {
@@ -288,6 +304,11 @@ tbody tr:last-child td {
   color: #3730a3;
 }
 
+.danger-link {
+  background: #b91c1c;
+  color: white;
+}
+
 .empty-state {
   color: #6b7280;
   padding: 18px 2px;
@@ -375,4 +396,139 @@ tbody tr:last-child td {
     border-radius: 9px;
     font-size: .78rem;
   }
+}
+/* ForgeSpace colour theme */
+
+:root {
+  --fs-orange: #f96401;
+  --fs-background: #bfbfbf;
+  --fs-charcoal: #111827;
+  --fs-green: #166534;
+  --fs-green-light: #dcfce7;
+  --fs-red: #c81e1e;
+  --fs-border: #d1d5db;
+}
+
+body {
+  background: var(--fs-background);
+}
+
+.app-header {
+  background: var(--fs-orange);
+}
+
+.eyebrow {
+  color: white;
+}
+
+.app-header .primary {
+  background: transparent;
+  color: white;
+}
+
+.job-card {
+  background: white;
+}
+
+.job-card.running {
+  border: 2px solid var(--fs-green);
+}
+
+.status.running {
+  background: var(--fs-green-light);
+  color: var(--fs-green);
+}
+
+.success {
+  background: var(--fs-green);
+  color: white;
+}
+
+.primary {
+  background: var(--fs-charcoal);
+  color: white;
+}
+
+.secondary {
+  background: white;
+  color: var(--fs-charcoal);
+  border: 1px solid var(--fs-border);
+}
+
+.product-heading {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.product-title {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.product-title h1 {
+    margin: 0;
+}
+
+.fs-monogram {
+    font-family: 'Orbitron', sans-serif;
+    font-weight: 800;
+    font-size: 2rem;
+    color: white;
+    line-height: 1;
+    letter-spacing: -1px;
+}
+/* ===== ForgeSpace Header ===== */
+/* ===== ForgeSpace Header ===== */
+
+.product-heading {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.product-title {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.product-title h1 {
+  margin: 0;
+  color: white;
+  font-family: "Orbitron", sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.02em;
+}
+
+.fs-monogram {
+  display: block;
+  width: 64px;
+  height: auto;
+  flex-shrink: 0;
+}
+
+.business-name {
+  margin: 3px 0 0 76px;
+  color: rgba(255, 255, 255, 0.92);
+  font-size: 0.95rem;
+  font-weight: 500;
+}
+/* ===== Header actions ===== */
+
+.header-actions {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-button {
+  background: transparent;
+  color: white;
+  padding: 0 10px;
+}
+
+.header-button:hover {
+  background: rgba(255, 255, 255, 0.14);
 }

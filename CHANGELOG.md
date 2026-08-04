@@ -1,4 +1,4 @@
-# Workshop Timer Changelog
+# FS Workshop Changelog
 
 ## v2.1
 - Fixed Create and Start bug caused by crypto.randomUUID().

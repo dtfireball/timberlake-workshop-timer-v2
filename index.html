@@ -6,20 +6,36 @@
   <meta name="theme-color" content="#111827" />
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-  <meta name="apple-mobile-web-app-title" content="Workshop Timer" />
-  <title>Timberlake Workshop Timer</title>
+  <meta name="apple-mobile-web-app-title" content="FS Workshop" />
+  <title>FS Workshop</title>
   <link rel="manifest" href="manifest.json" />
   <link rel="apple-touch-icon" href="icon-192.png" />
   <link rel="stylesheet" href="styles.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Orbitron:wght@500;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
   <header class="app-header">
-    <div>
-      <p class="eyebrow">TIMBERLAKE AUTOMOTIVE</p>
-      <h1>Workshop Timer</h1>
+  <div class="product-heading">
+    <div class="product-title">
+      <img class="fs-monogram"
+     src="assets/logos/fs-monogram.svg"
+     alt="ForgeSpace">
+      <h1>Workshop</h1>
     </div>
-    <button id="newJobButton" class="primary">+ New Job</button>
-  </header>
+
+    <p id="businessNameHeader" class="business-name">
+      Timberlake Automotive
+    </p>
+  </div>
+
+<div class="header-actions">
+  <button id="customersButton" class="header-button">Customers</button>
+  <button id="settingsButton" class="header-button">Settings</button>
+  <button id="newJobButton" class="header-button">+ New Job</button>
+</div>
+</header>
 
   <main>
     <section>
@@ -64,7 +80,7 @@
   <dialog id="jobDialog">
  <form id="jobForm" method="dialog">
   <div class="dialog-header">
-    <h2 id="jobDialogTitle">New Job Timer</h2>
+    <h2 id="jobDialogTitle">New Job</h2>
     <button
       type="button"
       id="closeDialog"
@@ -166,7 +182,220 @@
   </div>
 </form>
   </dialog>
+<dialog id="settingsDialog">
+  <form id="settingsForm">
+    <div class="dialog-header">
+      <h2>Workshop Profile</h2>
 
+      <button
+        type="button"
+        id="closeSettings"
+        class="icon-button"
+        aria-label="Close settings"
+      >
+        ×
+      </button>
+    </div>
+
+    <label>
+      Business name
+      <input
+        name="businessName"
+        placeholder="e.g. Timberlake Automotive"
+      />
+    </label>
+    <label>
+  ABN
+  <input
+    name="abn"
+    inputmode="numeric"
+    placeholder="Australian Business Number"
+  />
+</label>
+    <label>
+      Street address
+      <input
+        name="streetAddress"
+        placeholder="Street address"
+      />
+    </label>
+
+    <div class="form-grid">
+      <label>
+        Suburb
+        <input name="suburb" placeholder="Suburb" />
+      </label>
+
+      <label>
+        Postcode
+        <input
+          name="postcode"
+          inputmode="numeric"
+          placeholder="Postcode"
+        />
+      </label>
+    </div>
+
+    <div class="form-grid">
+  <label>
+    State
+    <input name="state" placeholder="State" />
+  </label>
+
+  <label>
+    Phone
+    <input
+      name="phone"
+      type="tel"
+      placeholder="Phone number"
+    />
+  </label>
+</div>
+
+<label>
+  Mobile
+  <input
+    name="mobile"
+    type="tel"
+    placeholder="Mobile number"
+  />
+</label>
+
+    <label>
+      Email
+      <input
+        name="email"
+        type="email"
+        placeholder="Email address"
+      />
+    </label>
+
+    <label>
+      Website
+      <input
+        name="website"
+        type="url"
+        placeholder="https://example.com.au"
+      />
+    </label>
+<div class="form-grid">
+  <label>
+    Labour rate ($/hour)
+    <input
+      name="labourRate"
+      type="number"
+      min="0"
+      step="0.01"
+      placeholder="e.g. 150.00"
+    />
+  </label>
+
+  <label>
+    GST registered
+    <select name="gstRegistered">
+      <option value="yes">Yes</option>
+      <option value="no">No</option>
+    </select>
+  </label>
+</div>
+    <div class="dialog-actions">
+      <button
+        type="button"
+        id="cancelSettings"
+        class="secondary"
+      >
+        Cancel
+      </button>
+
+      <button type="submit" class="primary">
+        Save Settings
+      </button>
+    </div>
+  </form>
+</dialog>
+<dialog id="customersDialog">
+  <form id="customersForm">
+    <input type="hidden" name="editingCustomerId" />
+    <div class="dialog-header">
+      <h2>Customers</h2>
+
+      <button
+        type="button"
+        id="closeCustomers"
+        class="icon-button"
+        aria-label="Close customers"
+      >
+        ×
+      </button>
+    </div>
+
+    <label>
+      Customer name
+      <input
+        name="customerName"
+        required
+        placeholder="Customer name"
+      />
+    </label>
+
+    <div class="form-grid">
+      <label>
+        Phone
+        <input
+          name="phone"
+          type="tel"
+          placeholder="Phone"
+        />
+      </label>
+
+      <label>
+        Mobile
+        <input
+          name="mobile"
+          type="tel"
+          placeholder="Mobile"
+        />
+      </label>
+    </div>
+
+    <label>
+      Email
+      <input
+        name="email"
+        type="email"
+        placeholder="Email"
+      />
+    </label>
+<div class="customer-list-section">
+  <h3>Saved Customers</h3>
+
+  <label class="search-box">
+  <input
+    id="customerSearch"
+    type="search"
+    placeholder="Search customers..."
+    autocomplete="off"
+  />
+</label>
+
+  <div id="customersList"></div>
+  <p id="emptyCustomers" class="empty-state">No customers saved yet.</p>
+</div>
+    <div class="dialog-actions">
+      <button
+        type="button"
+        id="cancelCustomers"
+        class="secondary"
+      >
+        Cancel
+      </button>
+
+      <button type="submit" class="primary">
+        Save Customer
+      </button>
+    </div>
+  </form>
+</dialog>
   <dialog id="detailsDialog">
     <div id="detailsContent"></div>
   </dialog>

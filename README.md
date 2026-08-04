@@ -1,4 +1,4 @@
-# Timberlake Workshop Timer
+# FS Workshop
 
 A simple installable workshop job timer.
 
