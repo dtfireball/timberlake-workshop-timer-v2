@@ -320,9 +320,10 @@ tbody tr:last-child td {
 }
 
 @media (max-width: 640px) {
-  .app-header {
-    align-items: flex-end;
-  }
+.app-header {
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
 
   .app-header .primary {
     min-height: 42px;
@@ -345,6 +346,22 @@ tbody tr:last-child td {
 
   .form-grid {
     grid-template-columns: 1fr;
+    .product-heading {
+    width: 100%;
+}
+
+.header-actions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.header-button {
+    min-width: 0;
+    white-space: nowrap;
+    font-size: 0.85rem;
+}
   }
 }
 
