@@ -95,11 +95,14 @@
 
   <label>
     Customer *
-    <input
-      name="customer"
-      required
-      placeholder="Customer name"
-    />
+<input
+    name="customer"
+    list="customerSuggestions"
+    required
+    placeholder="Customer name"
+/>
+
+<datalist id="customerSuggestions"></datalist>
   </label>
 
   <div class="form-grid">

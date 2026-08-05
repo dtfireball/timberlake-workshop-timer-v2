@@ -38,8 +38,11 @@ const emptyCustomers = document.querySelector("#emptyCustomers");
 const jobForm = document.querySelector("#jobForm");
 const jobDialogTitle = document.querySelector("#jobDialogTitle");
 const jobSubmitButton = document.querySelector("#jobSubmitButton");
+const customerSuggestions = document.querySelector("#customerSuggestions");
+
 function openNewJobDialog() {
   jobForm.reset();
+  populateCustomerSuggestions();
   jobForm.elements.editingJobId.value = "";
   jobDialogTitle.textContent = "New Job";
   jobSubmitButton.textContent = "Create & Start";
@@ -80,6 +83,19 @@ function loadCustomers() {
 
 function saveCustomers(customers) {
   localStorage.setItem(CUSTOMERS_KEY, JSON.stringify(customers));
+}
+function populateCustomerSuggestions() {
+  const customers = loadCustomers().sort((a, b) =>
+    a.name.localeCompare(b.name)
+  );
+
+  customerSuggestions.innerHTML = "";
+
+  customers.forEach((customer) => {
+    const option = document.createElement("option");
+    option.value = customer.name;
+    customerSuggestions.appendChild(option);
+  });
 }
 function renderCustomers() {
 const customers = loadCustomers().sort((a, b) =>
